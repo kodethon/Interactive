@@ -3,9 +3,12 @@ import pdb
 import json
 import bs4
 
-class Parser():
+class Task():
     
-    def __init__(self, config):
+    def __init__(self, config, logging, html):
+        self.html = html
+        self.config = config
+        self.logger = logging.getLogger(os.path.basename(__file__))
         self.processed_input_path = config.processed_input_path
 
         with open(config.input_file_path) as f:
@@ -32,13 +35,17 @@ class Parser():
         self.buttons += unicode(button)
 
     def create_style(self, page, style):
-        toks = style.split(';')
-        for tok in toks:
-            a = tok.split(':') 
-            if a[0] != 'top': continue
-            top1 = float(a[1].replace('px', ''))
-            top2 = float(page['offset_top'].replace('px', ''))
-            return style.replace(tok, "top:%spx" %  str(top1 + top2))
+        top = self.html.get_css_property_value('top', style)
+        top_abs = float(top.replace('px', ''))
+        top_rel = float(page['offset_top'].replace('px', ''))
+        style = style.replace(top, "top:%spx" %  str(top_abs + top_rel))
+
+        left = self.util.get_css_property_value('left', style)
+        left_abs = float(left.replace('px', ''))
+        left_rel = float(page['offset_left'].replace('px', ''))
+        style = style.replace(left, "top:%spx" %  str(left_abs + left_rel))
+
+        return style
 
     def find_page(self, line_number):
         length = len(self.pages) - 1

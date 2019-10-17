@@ -4,22 +4,16 @@ import os
 import ast
 import json
 
-class Parser():
+class Task():
 
-    def __init__(self, config):
+    def __init__(self, config, logging, html):
+        self.html = html 
+        self.logger = logging.getLogger(os.path.basename(__file__))
         self.config = config
         self.snippets_json_path = config.snippets_json_path
 
         with open(config.input_file_path) as f:
             self.file_contents = f.read()
-
-    def get_left_position(self, css):
-        styles = css.split(';')
-        for style in styles:
-            toks = style.split(':')
-            if toks[0] != 'left':
-                continue
-            return toks[1]
 
     def execute(self, sections):
         self.Snippets = []
@@ -34,14 +28,13 @@ class Parser():
                 text = element.text.strip()
                 if len(text) == 0: continue 
 
-                style = element.find('div').attrs['style']
                 tmp = snippet + "\n" + text
                 try:
                     ast.parse(tmp)
                 except SyntaxError as e:
                     if len(snippet) > 0:
                         self.Snippets.append({
-                            'style' : style,
+                            'style' : element.find('div').attrs['style'],
                             'start_line' : i,
                             'code' : snippet
                         })
@@ -49,7 +42,7 @@ class Parser():
                         indents = []
                     continue
 
-                indents.append(self.get_left_position(style))
+                indents.append(self.html.get_css_property_value('left', line))
                 snippet = tmp
          
         return self.Snippets

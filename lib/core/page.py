@@ -8,8 +8,10 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-class Parser():
-    def __init__(self, config):
+class Task():
+    def __init__(self, config, logging, html):
+        self.html = html 
+        self.logger = logging.getLogger(os.path.basename(__file__))
         self.config = config
         self.pages_json_path = config.pages_json_path
     
@@ -25,20 +27,12 @@ class Parser():
         if not match: return False
         return True
 
-    def get_offset_top(self, line):
-        soup = bs4.BeautifulSoup(line, 'html.parser')
-        style = soup.div.attrs['style']
-        styles = style.split(';')
-        for style in styles:
-            toks = style.split(':')
-            if toks[0] != 'top': continue
-            return toks[1]
-
     def build_pages(self, line, line_num):
         if self.is_page_start(line):
             self.Pages.append({
                 'line_number' : line_num,
-                'offset_top' : self.get_offset_top(line)
+                'offset_top' : self.html.get_css_property_value(line, 'top'),
+                'offset_left' : self.html.get_css_property_value(line, 'left')
             })       
     
     def execute(self, input_data = None):

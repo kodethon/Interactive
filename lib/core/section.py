@@ -8,10 +8,11 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-class Parser():
+class Task():
 
-    def __init__(self, config):
+    def __init__(self, config, logging):
         self.config = config
+        self.logger = logging.getLogger(os.path.basename(__file__))
         self.sections_json_path = config.sections_json_path
 
         with open(config.input_file_path) as f:
