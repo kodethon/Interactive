@@ -2,15 +2,20 @@ import sys
 import pdb
 import json
 import os
+import logging
+
+from lib.util import html
 
 from lib import pipeline
-from lib import page
-from lib import snippet
-from lib import section
-from lib import decorator
+from lib.core import page
+from lib.core import snippet
+from lib.core import section
+from lib.core import decorator
 
 if len(sys.argv) == 0:
     sys.exit(1)
+
+logging.basicConfig(level=logging.INFO)
 
 config = pipeline.Config()
 config.input_file_path = sys.argv[1]
@@ -19,18 +24,18 @@ config.pages_json_path = '/tmp/pages.json'
 config.snippets_json_path = '/tmp/snippets.json'
 config.processed_input_path = '/tmp/output.html'
 
-pipeline = pipeline.Pipe()
+pipeline = pipeline.Pipe(logging)
 
-parser = page.Parser(config)
-pipeline.add_step(parser)
+task = page.Task(config, logging, html)
+pipeline.add_step(task)
+'''
+task = section.Task(config, logging)
+pipeline.add_step(task)
 
-parser = section.Parser(config)
-pipeline.add_step(parser)
+task = snippet.Task(config, logging, html)
+pipeline.add_step(task)
 
-parser = snippet.Parser(config)
-pipeline.add_step(parser)
-
-parser = decorator.Parser(config)
-pipeline.add_step(parser)
-
+task = decorator.Task(config, logging, html)
+pipeline.add_step(task)
+'''
 pipeline.execute('Section \d*?\.\d*?:')
