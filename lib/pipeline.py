@@ -1,7 +1,4 @@
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+import os
 
 class Config():
     def __init__(self):
@@ -25,17 +22,19 @@ class Step():
 
 class Pipe():
    
-    def __init__(self):
+    def __init__(self, logging):
         self.steps = []
+        self.logger = logging.getLogger(os.path.basename(__file__))
 
     def add_step(self, step):
         self.steps.append(step)
 
     def execute(self, input_data):
         for step in self.steps:
-            logger.info('hee')
             if step.cached():
+                self.logger.info("Fetching cached data for %s" % step.__class__)
                 input_data = step.fetch_cache()
             else:
+                self.logger.info("Executing %s" % step.__class__)
                 input_data = step.execute(input_data)
                 step.cache()
