@@ -14,6 +14,9 @@ class Task():
         self.logger = logging.getLogger(os.path.basename(__file__))
         self.config = config
         self.pages_json_path = config.pages_json_path
+
+        with open(config.input_file_path) as f:
+            self.file_contents = f.read()
     
     def with_input_path(self, input_path):
         with open(input_path) as f:
@@ -31,8 +34,8 @@ class Task():
         if self.is_page_start(line):
             self.Pages.append({
                 'line_number' : line_num,
-                'offset_top' : self.html.get_css_property_value(line, 'top'),
-                'offset_left' : self.html.get_css_property_value(line, 'left')
+                'offset_top' : self.html.get_css_property_value('top', line),
+                'offset_left' : self.html.get_css_property_value('left', line)
             })       
     
     def execute(self, input_data = None):
@@ -43,9 +46,9 @@ class Task():
         for line in lines:
             line_num += 1
 
-            self.buildPages(line, line_num)
+            self.build_pages(line, line_num)
 
-        return self.Pages
+        return input_data
 
     def fetch_cache(self):
         with open(self.pages_json_path, 'r') as f:
@@ -56,8 +59,8 @@ class Task():
         return os.path.exists(self.pages_json_path)
 
     def cache(self):
-        if not os.path.exists(pages_json_path):
-            with open(self.pages_json_path, 'r') as f:
+        if not os.path.exists(self.pages_json_path):
+            with open(self.pages_json_path, 'w') as f:
                 f.write(json.dumps(self.Pages))
                 return True
         return False
