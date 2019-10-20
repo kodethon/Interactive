@@ -38,6 +38,7 @@ class Task():
     def build_sections(self):
         sections = []
         length = len(self.SectionTitles)
+        lines = self.file_contents.split("\n")
         for i in xrange(0, length):
             section_title = self.SectionTitles[i]
             start_line = self.SectionStarts[section_title]
@@ -64,8 +65,7 @@ class Task():
         for line in lines:
             line_num += 1
 
-            self.buildPages(line, line_num)
-
+            #self.build_pages(line, line_num)
             match = re.search(pattern, line)
             if not match: continue 
 
