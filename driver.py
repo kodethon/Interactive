@@ -7,6 +7,8 @@ import logging
 from lib.util import html
 
 from lib import pipeline
+from lib import interpreter
+
 from lib.core import page
 from lib.core import snippet
 from lib.core import section
@@ -28,14 +30,14 @@ pipeline = pipeline.Pipe(logging)
 
 task = page.Task(config, logging, html)
 pipeline.add_step(task)
-'''
+
 task = section.Task(config, logging)
 pipeline.add_step(task)
 
-task = snippet.Task(config, logging, html)
+task = snippet.Task(config, logging, html, interpreter)
 pipeline.add_step(task)
 
 task = decorator.Task(config, logging, html)
 pipeline.add_step(task)
-'''
+
 pipeline.execute('Section \d*?\.\d*?:')
