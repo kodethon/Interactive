@@ -5,8 +5,8 @@ import os
 import json
 
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+#reload(sys)
+#sys.setdefaultencoding('utf-8')
 
 class Task():
 
@@ -39,7 +39,7 @@ class Task():
         sections = []
         length = len(self.SectionTitles)
         lines = self.file_contents.split("\n")
-        for i in xrange(0, length):
+        for i in range(0, length):
             section_title = self.SectionTitles[i]
             start_line = self.SectionStarts[section_title]
 
