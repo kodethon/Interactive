@@ -40,7 +40,7 @@ class Task():
         top_rel = float(page['offset_top'].replace('px', ''))
         style = style.replace(top, "top:%spx" %  str(top_abs + top_rel))
 
-        left = self.util.get_css_property_value('left', style)
+        left = self.html.get_css_property_value('left', style)
         left_abs = float(left.replace('px', ''))
         left_rel = float(page['offset_left'].replace('px', ''))
         style = style.replace(left, "top:%spx" %  str(left_abs + left_rel))
@@ -52,7 +52,7 @@ class Task():
         i = 0
         j = length
         while i <= j:
-            index = (i + j) / 2
+            index = int((i + j) / 2)
             
             page = self.pages[index]
             cur_line_number = page['line_number']
