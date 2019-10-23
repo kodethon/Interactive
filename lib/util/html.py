@@ -1,6 +1,13 @@
-def get_css_property_value(self, prop, line):
-    soup = bs4.BeautifulSoup(line, 'html.parser')
-    style = soup.div.attrs['style']
+import bs4
+import pdb
+
+def get_css_property_value(prop, line):
+    try:
+        soup = bs4.BeautifulSoup(line, 'html.parser')
+        style = soup.div.attrs['style']
+    except Exception as e:
+        style = line
+
     styles = style.split(';')
     for style in styles:
         toks = style.split(':')
